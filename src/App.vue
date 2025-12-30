@@ -121,6 +121,7 @@
           <PinPanel 
             :pin="panelPin"
             :is-new="isNewPin"
+            :user="user"
             @close="closePanel"
             @save="handleSave"
             @delete="handleDelete"

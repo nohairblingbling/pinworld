@@ -13,7 +13,7 @@
             </n-icon>
           </template>
         </n-button>
-        <n-button v-if="!isEditing" circle quaternary @click="startEdit">
+        <n-button v-if="!isEditing && user" circle quaternary @click="startEdit">
           <template #icon>
             <n-icon>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -23,7 +23,7 @@
             </n-icon>
           </template>
         </n-button>
-        <n-button v-if="!isNew" circle quaternary type="error" @click="confirmDelete">
+        <n-button v-if="!isNew && user" circle quaternary type="error" @click="confirmDelete">
           <template #icon>
             <n-icon>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -209,6 +209,10 @@ const props = defineProps({
   isNew: {
     type: Boolean,
     default: false
+  },
+  user: {
+    type: Object,
+    default: null
   }
 })
 
