@@ -1,9 +1,10 @@
-// GitHub 图床上传
+// GitHub 图床上传 - 使用 Cloudflare Worker 代理
 import { ref } from 'vue'
 
-// 从环境变量获取 token，需要在 .env 文件中配置 VITE_GITHUB_TOKEN
-// 或者在部署时通过环境变量注入
-const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN || ''
+// Cloudflare Worker URL
+const WORKER_URL = 'https://morning-frost-be96.duskandwine.workers.dev'
+
+// 仓库配置（Worker 中也需要同步配置）
 const GITHUB_REPO = 'nohairblingbling/pinworld'
 const GITHUB_BRANCH = 'main'
 const IMAGE_PATH = 'uploads/images'
@@ -46,39 +47,33 @@ export function useGitHub() {
       const content = await readFileFilterPrefix(file)
       const path = `${IMAGE_PATH}/${fileName}`
       
-      // GitHub Pages 部署时直接调用 GitHub API
-      const baseUrl = 'https://api.github.com'
+      console.log(`[useGitHub] Uploading: ${path}`)
       
-      console.log(`[useGitHub] Uploading to: ${GITHUB_REPO}/${path}`)
-      
-      const url = `${baseUrl}/repos/${GITHUB_REPO}/contents/${path}`
-      
-      const response = await fetch(url, {
+      // 通过 Cloudflare Worker 代理上传
+      const response = await fetch(WORKER_URL, {
         method: 'PUT',
         headers: {
-          'Authorization': `token ${GITHUB_TOKEN}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/vnd.github.v3+json'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          message: `upload ${fileName} via PinWorld`,
+          path: path,
           content: content,
-          branch: GITHUB_BRANCH
+          message: `upload ${fileName} via PinWorld`
         }),
-        signal: controller.signal // 超时信号
+        signal: controller.signal
       })
 
       clearTimeout(timeoutId)
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.message || 'GitHub Upload Failed')
+        throw new Error(errorData.message || errorData.error || 'Upload Failed')
       }
 
       const data = await response.json()
       console.log('[useGitHub] Upload success:', data.content?.path)
       
-      // 使用 raw.githubusercontent.com（即时可用，无 CDN 延迟）
+      // 返回图片 URL
       return `https://raw.githubusercontent.com/${GITHUB_REPO}/${GITHUB_BRANCH}/${path}`
       
     } catch (err) {
@@ -93,7 +88,6 @@ export function useGitHub() {
       }
       throw err
     } finally {
-      // 无论成功失败，都重置上传状态
       uploading.value = false
     }
   }
@@ -114,3 +108,4 @@ export function useGitHub() {
     uploadImages
   }
 }
+
