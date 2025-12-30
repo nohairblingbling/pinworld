@@ -1,0 +1,167 @@
+/* ================================================
+   WorldInMind - Global Styles
+   New Palette based on User Provided Colors:
+   - Primary Light (Sky Blue): #4C9AC0
+   - Primary (Ocean Blue): #257EAA
+   - Primary Dark (Deep Blue): #005F89
+   - Neutral Dark (Slate): #3C464F
+   ================================================ */
+
+:root {
+  /* Backgrounds */
+  --bg-primary: #f8fafc;       /* Cool White */
+  --bg-secondary: #ffffff;     /* Pure White for cards */
+  --bg-dark: #3C464F;          /* Slate for dark elements */
+  --bg-dark-secondary: #4a5562;
+  
+  /* Primary - Blue */
+  --accent: #257EAA;
+  --accent-light: #4C9AC0;
+  --accent-dark: #005F89;
+  --accent-glow: rgba(37, 126, 170, 0.15);
+  
+  /* Secondary - Slate */
+  --info: #4C9AC0;
+  --info-light: #7BB8D4;
+  --info-dark: #257EAA;
+  
+  /* Warning - Gold (keeping for contrast) */
+  --warning: #E6A23C;
+  --warning-light: #EEBE77;
+  --warning-dark: #CF8B1C;
+  
+  /* Error/Danger - Red */
+  --danger: #E74C3C;
+  --danger-light: #EC7063;
+  --danger-dark: #C0392B;
+  
+  /* Aliases */
+  --success: #27AE60;
+  --green: #27AE60;
+  --gold: var(--warning);
+  
+  /* Text */
+  --text-primary: #1d1c18;
+  --text-secondary: #5f5f58;
+  --text-muted: #adafb3;
+  --text-light: #fefcf6;
+  
+  /* Borders */
+  --border-color: #e8e5de;
+  --border-dark: rgba(255, 255, 255, 0.1);
+  
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'EB Garamond', Georgia, 'Times New Roman', serif;
+  
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+}
+
+/* ============ Reset & Base ============ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+/* Naive UI Providers - 必须全高度 */
+.n-config-provider,
+.n-message-provider,
+.n-dialog-provider,
+.n-notification-provider {
+  height: 100% !important;
+  display: block !important;
+}
+
+/* ============ Scrollbar ============ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ============ Typography ============ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--accent-dark);
+}
+
+/* ============ Form Elements ============ */
+input, textarea, select, button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ============ Utilities ============ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
