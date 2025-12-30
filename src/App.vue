@@ -395,9 +395,8 @@ function handleMapClick(location) {
     closePanel()
     return
   }
+  // 未登录时静默忽略点击（只读模式）
   if (!user.value) {
-    showToast('🔒 请先解锁编辑权限', 'info')
-    showAuthModal.value = true
     return
   }
   createNewPin(location)
