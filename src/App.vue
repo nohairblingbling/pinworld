@@ -85,11 +85,13 @@
                 </n-icon>
               </template>
             </n-button>
-            <n-button v-else circle size="large" type="success" disabled>
+            <n-button v-else circle size="large" type="success" @click="handleLogout" title="退出登录">
               <template #icon>
                 <n-icon :size="18">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path d="M20 6L9 17l-5-5"></path>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
                   </svg>
                 </n-icon>
               </template>
@@ -201,7 +203,7 @@ const themeOverrides = {
   }
 }
 
-const { pins, user, login, loading, addPin, updatePin, deletePin } = useFirebase()
+const { pins, user, login, logout, loading, addPin, updatePin, deletePin } = useFirebase()
 
 const mapRef = ref(null)
 const selectedPin = ref(null)
@@ -267,6 +269,17 @@ async function handleAuth() {
     console.error(err)
   } finally {
     authLoading.value = false
+  }
+}
+
+// 退出登录
+async function handleLogout() {
+  try {
+    await logout()
+    showToast('已退出编辑模式')
+  } catch (err) {
+    showToast('退出失败', 'error')
+    console.error(err)
   }
 }
 

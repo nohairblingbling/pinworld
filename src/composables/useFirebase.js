@@ -12,7 +12,8 @@ import {
 } from 'firebase/firestore'
 import { 
   getAuth, 
-  signInWithEmailAndPassword, 
+  signInWithEmailAndPassword,
+  signOut,
   onAuthStateChanged 
 } from 'firebase/auth'
 import { ref, onUnmounted } from 'vue'
@@ -54,6 +55,16 @@ export function useFirebase() {
       await signInWithEmailAndPassword(auth, email, password)
     } catch (err) {
       console.error('Login failed:', err)
+      throw err
+    }
+  }
+
+  // 退出登录
+  async function logout() {
+    try {
+      await signOut(auth)
+    } catch (err) {
+      console.error('Logout failed:', err)
       throw err
     }
   }
@@ -146,6 +157,7 @@ export function useFirebase() {
     pins,
     user,
     login,
+    logout,
     loading,
     error,
     addPin,
