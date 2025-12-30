@@ -112,7 +112,7 @@ const visiblePins = computed(() => {
   return props.pins
 })
 
-// 按国家聚合
+// 按国家聚合 - 使用国家中心坐标
 function getCountryClusters() {
   const countryGroups = {}
   
@@ -121,30 +121,27 @@ function getCountryClusters() {
     const country = pin.location.country || '未知'
     
     if (!countryGroups[country]) {
+      // 获取国家中心坐标
+      const center = getCountryCenter(country)
+      
       countryGroups[country] = {
         id: `country-${country}`,
         label: country,
         count: 0,
         pins: [],
-        // 取第一个pin的位置作为聚合点位置
-        lng: pin.location.lng,
-        lat: pin.location.lat
+        lng: center?.lng || pin.location.lng,
+        lat: center?.lat || pin.location.lat
       }
     }
     
     countryGroups[country].count++
     countryGroups[country].pins.push(pin)
-    
-    // 更新为所有pin的中心点
-    const group = countryGroups[country]
-    group.lng = group.pins.reduce((sum, p) => sum + p.location.lng, 0) / group.pins.length
-    group.lat = group.pins.reduce((sum, p) => sum + p.location.lat, 0) / group.pins.length
   })
   
   return Object.values(countryGroups)
 }
 
-// 按城市聚合
+// 按城市聚合 - 使用城市中心坐标
 function getCityClusters() {
   const cityGroups = {}
   
@@ -155,26 +152,149 @@ function getCityClusters() {
     const key = `${city}-${country}`
     
     if (!cityGroups[key]) {
+      // 获取城市中心坐标
+      const center = getCityCenter(city, country)
+      
       cityGroups[key] = {
         id: `city-${key}`,
         label: city,
         count: 0,
         pins: [],
-        lng: pin.location.lng,
-        lat: pin.location.lat
+        lng: center?.lng || pin.location.lng,
+        lat: center?.lat || pin.location.lat
       }
     }
     
     cityGroups[key].count++
     cityGroups[key].pins.push(pin)
-    
-    // 更新为所有pin的中心点
-    const group = cityGroups[key]
-    group.lng = group.pins.reduce((sum, p) => sum + p.location.lng, 0) / group.pins.length
-    group.lat = group.pins.reduce((sum, p) => sum + p.location.lat, 0) / group.pins.length
   })
   
   return Object.values(cityGroups)
+}
+
+// 国家中心坐标查找表
+const COUNTRY_CENTERS = {
+  '中国': { lng: 104.195, lat: 35.862 },
+  '日本': { lng: 138.252, lat: 36.205 },
+  '韩国': { lng: 127.767, lat: 35.908 },
+  '美国': { lng: -95.713, lat: 37.091 },
+  '英国': { lng: -3.436, lat: 55.378 },
+  '法国': { lng: 2.214, lat: 46.228 },
+  '德国': { lng: 10.451, lat: 51.166 },
+  '意大利': { lng: 12.567, lat: 41.872 },
+  '西班牙': { lng: -3.750, lat: 40.464 },
+  '澳大利亚': { lng: 133.775, lat: -25.274 },
+  '加拿大': { lng: -106.347, lat: 56.130 },
+  '泰国': { lng: 100.993, lat: 15.870 },
+  '新加坡': { lng: 103.820, lat: 1.352 },
+  '马来西亚': { lng: 101.976, lat: 4.210 },
+  '印度尼西亚': { lng: 113.921, lat: -0.790 },
+  '越南': { lng: 108.277, lat: 14.058 },
+  '俄罗斯': { lng: 105.319, lat: 61.524 },
+  '巴西': { lng: -51.926, lat: -14.235 },
+  '墨西哥': { lng: -102.553, lat: 23.635 },
+  '印度': { lng: 78.963, lat: 20.594 },
+  '阿联酋': { lng: 53.848, lat: 23.424 },
+  '土耳其': { lng: 35.244, lat: 38.964 },
+  '希腊': { lng: 21.824, lat: 39.074 },
+  '埃及': { lng: 30.803, lat: 26.821 },
+  '南非': { lng: 22.938, lat: -30.559 },
+  '新西兰': { lng: 174.886, lat: -40.901 },
+  '瑞士': { lng: 8.228, lat: 46.818 },
+  '荷兰': { lng: 5.291, lat: 52.133 },
+  '比利时': { lng: 4.470, lat: 50.504 },
+  '奥地利': { lng: 14.550, lat: 47.516 },
+  '瑞典': { lng: 18.643, lat: 60.128 },
+  '挪威': { lng: 8.469, lat: 60.472 },
+  '丹麦': { lng: 9.502, lat: 56.264 },
+  '芬兰': { lng: 25.749, lat: 61.924 },
+  '波兰': { lng: 19.145, lat: 51.920 },
+  '捷克': { lng: 15.473, lat: 49.818 },
+  '匈牙利': { lng: 19.503, lat: 47.162 },
+  '葡萄牙': { lng: -8.224, lat: 39.400 },
+  '爱尔兰': { lng: -8.244, lat: 53.413 },
+  '菲律宾': { lng: 121.774, lat: 12.879 },
+  '台湾': { lng: 120.960, lat: 23.698 },
+  '香港': { lng: 114.110, lat: 22.396 },
+  '澳门': { lng: 113.544, lat: 22.199 }
+}
+
+// 城市中心坐标查找表
+const CITY_CENTERS = {
+  '北京': { lng: 116.407, lat: 39.904 },
+  '上海': { lng: 121.474, lat: 31.230 },
+  '广州': { lng: 113.265, lat: 23.108 },
+  '深圳': { lng: 114.086, lat: 22.547 },
+  '杭州': { lng: 120.154, lat: 30.274 },
+  '成都': { lng: 104.066, lat: 30.573 },
+  '重庆': { lng: 106.505, lat: 29.533 },
+  '西安': { lng: 108.940, lat: 34.342 },
+  '武汉': { lng: 114.298, lat: 30.584 },
+  '南京': { lng: 118.797, lat: 32.061 },
+  '苏州': { lng: 120.620, lat: 31.299 },
+  '天津': { lng: 117.190, lat: 39.126 },
+  '青岛': { lng: 120.382, lat: 36.067 },
+  '大连': { lng: 121.619, lat: 38.914 },
+  '厦门': { lng: 118.089, lat: 24.479 },
+  '三亚': { lng: 109.508, lat: 18.248 },
+  '丽江': { lng: 100.234, lat: 26.872 },
+  '拉萨': { lng: 91.133, lat: 29.660 },
+  '香港': { lng: 114.173, lat: 22.320 },
+  '澳门': { lng: 113.549, lat: 22.199 },
+  '台北': { lng: 121.565, lat: 25.033 },
+  '东京': { lng: 139.691, lat: 35.690 },
+  '大阪': { lng: 135.502, lat: 34.694 },
+  '京都': { lng: 135.768, lat: 35.012 },
+  '首尔': { lng: 126.978, lat: 37.567 },
+  '釜山': { lng: 129.076, lat: 35.180 },
+  '曼谷': { lng: 100.502, lat: 13.756 },
+  '新加坡': { lng: 103.820, lat: 1.352 },
+  '吉隆坡': { lng: 101.687, lat: 3.139 },
+  '巴厘岛': { lng: 115.093, lat: -8.341 },
+  '雅加达': { lng: 106.845, lat: -6.208 },
+  '胡志明市': { lng: 106.630, lat: 10.823 },
+  '河内': { lng: 105.834, lat: 21.028 },
+  '纽约': { lng: -74.006, lat: 40.713 },
+  '洛杉矶': { lng: -118.244, lat: 34.052 },
+  '旧金山': { lng: -122.420, lat: 37.775 },
+  '拉斯维加斯': { lng: -115.140, lat: 36.170 },
+  '迈阿密': { lng: -80.191, lat: 25.762 },
+  '芝加哥': { lng: -87.630, lat: 41.878 },
+  '波士顿': { lng: -71.059, lat: 42.360 },
+  '西雅图': { lng: -122.332, lat: 47.606 },
+  '夏威夷': { lng: -155.584, lat: 19.897 },
+  '伦敦': { lng: -0.128, lat: 51.507 },
+  '巴黎': { lng: 2.352, lat: 48.857 },
+  '罗马': { lng: 12.496, lat: 41.903 },
+  '米兰': { lng: 9.190, lat: 45.464 },
+  '威尼斯': { lng: 12.316, lat: 45.440 },
+  '佛罗伦萨': { lng: 11.255, lat: 43.770 },
+  '巴塞罗那': { lng: 2.173, lat: 41.386 },
+  '马德里': { lng: -3.704, lat: 40.417 },
+  '柏林': { lng: 13.405, lat: 52.520 },
+  '慕尼黑': { lng: 11.582, lat: 48.135 },
+  '阿姆斯特丹': { lng: 4.900, lat: 52.367 },
+  '布鲁塞尔': { lng: 4.352, lat: 50.847 },
+  '维也纳': { lng: 16.374, lat: 48.209 },
+  '布拉格': { lng: 14.438, lat: 50.076 },
+  '布达佩斯': { lng: 19.040, lat: 47.498 },
+  '雅典': { lng: 23.728, lat: 37.984 },
+  '伊斯坦布尔': { lng: 28.979, lat: 41.008 },
+  '迪拜': { lng: 55.271, lat: 25.205 },
+  '开罗': { lng: 31.236, lat: 30.044 },
+  '悉尼': { lng: 151.209, lat: -33.868 },
+  '墨尔本': { lng: 144.963, lat: -37.814 },
+  '奥克兰': { lng: 174.763, lat: -36.848 },
+  '莫斯科': { lng: 37.618, lat: 55.756 },
+  '圣彼得堡': { lng: 30.316, lat: 59.939 }
+}
+
+function getCountryCenter(country) {
+  return COUNTRY_CENTERS[country] || null
+}
+
+function getCityCenter(city, country) {
+  return CITY_CENTERS[city] || null
 }
 
 // 获取聚合标记样式

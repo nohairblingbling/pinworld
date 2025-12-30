@@ -4,8 +4,8 @@ import { ref } from 'vue'
 // Cloudflare Worker URL
 const WORKER_URL = 'https://morning-frost-be96.duskandwine.workers.dev'
 
-// 仓库配置（Worker 中也需要同步配置）
-const GITHUB_REPO = 'nohairblingbling/pinworld'
+// 仓库配置（图床仓库，Worker 中也需要同步配置）
+const GITHUB_REPO = 'tracker-xydr/worldweb'
 const GITHUB_BRANCH = 'main'
 const IMAGE_PATH = 'uploads/images'
 

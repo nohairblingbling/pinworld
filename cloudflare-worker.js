@@ -14,14 +14,16 @@
 // 允许的来源域名（防止滥用）
 const ALLOWED_ORIGINS = [
   'https://nohairblingbling.github.io',
+  'https://yuzhuojia.fun',
+  'https://www.yuzhuojia.fun',
   'http://localhost:5173',
   'http://localhost:5174',
   'http://127.0.0.1:5173',
   'http://127.0.0.1:5174'
 ];
 
-// GitHub 仓库配置
-const GITHUB_REPO = 'nohairblingbling/pinworld';
+// GitHub 仓库配置（图床仓库）
+const GITHUB_REPO = 'tracker-xydr/worldweb';
 const GITHUB_BRANCH = 'main';
 
 export default {

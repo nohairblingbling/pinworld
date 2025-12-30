@@ -565,15 +565,15 @@ function formatDate(date) {
 }
 
 .search-input :deep(.n-input__input-el) {
-  color: #fff !important;
+  color: #333 !important;
 }
 
 .search-input :deep(.n-input__input-el::placeholder) {
-  color: rgba(255, 255, 255, 0.6) !important;
+  color: rgba(0, 0, 0, 0.4) !important;
 }
 
 .search-input :deep(.n-input__prefix) {
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: rgba(0, 0, 0, 0.5) !important;
 }
 
 /* 足迹按钮 - 与搜索栏统一风格 */
